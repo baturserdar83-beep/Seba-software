@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seba Software – Seba IPTV Player</title>
+<meta name="description" content="Seba IPTV Player plays your own M3U and Xtream playlists on Android, Android TV, LG TV and iPhone. Try it free for 7 days.">
+<link rel="icon" href="favicon.png">
+<script>
+  /* ================= SETTINGS – edit only here (INDSTILLINGER – ret kun her) ================= */
+  var CONFIG = {
+    priceYear: "",          // e.g. "€9.99"
+    priceLife: "",          // e.g. "€19.99"
+    stripeYear: "",         // Stripe payment link, 1 year   (https://buy.stripe.com/...)
+    stripeLife: "",         // Stripe payment link, lifetime
+    email: "",              // e.g. "support@sebasoftware.com"
+    cvr: "46892399",        // Danish company number (CVR)
+    apk: "SebaIPTVPlayer.apk"   // the APK file next to this page
+  };
+</script>
+<style>
+  :root {
+    --bg: #070912; --panel: rgba(20,25,44,.72); --line: rgba(255,255,255,.12);
+    --text: #F3F5FF; --dim: rgba(243,245,255,.68); --blue: #3D5AFE; --peri: #8FA6FF;
+    --amber: #FFC83D; --green: #5EE08A; --red: #FF8A80;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font: 17px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  a { color: var(--peri); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+  section { padding: 84px 0; }
+  h2 { font-size: 34px; line-height: 1.2; margin-bottom: 12px; letter-spacing: -.3px; }
+  .lead { color: var(--dim); font-size: 19px; max-width: 680px; }
+  .eyebrow { color: var(--peri); font-weight: 600; letter-spacing: 2px; font-size: 13px; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* header */
+  header { position: fixed; top: 0; left: 0; right: 0; z-index: 10; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(7,9,18,.72); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; height: 66px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; color: var(--text); }
+  .brand img { width: 36px; height: 36px; border-radius: 10px; }
+  nav { margin-left: auto; display: flex; gap: 26px; font-size: 15px; }
+  nav a { color: var(--dim); }
+  nav a:hover { color: var(--text); text-decoration: none; }
+  @media (max-width: 820px) { nav a:not(.cta) { display: none; } }
+  .btn { display: inline-block; padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 16px; border: 0; cursor: pointer; }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  .btn.primary { background: #fff; color: #0B0D17; }
+  .btn.ghost { background: rgba(255,255,255,.12); color: var(--text); }
+  .btn.blue { background: var(--blue); color: #fff; }
+  .btn.disabled { background: rgba(255,255,255,.08); color: var(--dim); cursor: default; pointer-events: none; }
+  nav .cta { padding: 8px 18px; background: #fff; color: #0B0D17; border-radius: 999px; font-weight: 600; }
+
+  /* hero */
+  .hero { position: relative; min-height: 92vh; display: flex; align-items: center; overflow: hidden; padding-top: 66px; }
+  .hero video { position: absolute; right: -6%; top: 50%; transform: translateY(-50%); height: 120%; max-height: 900px; opacity: .85; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 30%, rgba(7,9,18,.55) 62%, rgba(7,9,18,.15)); }
+  .hero .wrap { position: relative; z-index: 1; width: 100%; }
+  .hero h1 { font-size: clamp(40px, 6vw, 68px); line-height: 1.05; letter-spacing: -1px; max-width: 680px; }
+  .hero h1 span { background: linear-gradient(90deg, #FFC83D, #FF6A3D); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { margin: 22px 0 30px; font-size: 20px; color: var(--dim); max-width: 560px; }
+  .hero .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .note { margin-top: 18px; font-size: 14px; color: var(--dim); }
+  @media (max-width: 820px) {
+    .hero video { right: -40%; opacity: .45; }
+    .hero::after { background: linear-gradient(90deg, rgba(7,9,18,.92), rgba(7,9,18,.6)); }
+  }
+
+  /* device id banner */
+  #idBanner { display: none; position: relative; z-index: 2; margin: 0 auto; max-width: 1120px; }
+  #idBanner .in { margin: 18px 22px 0; padding: 16px 22px; border-radius: 18px; background: rgba(94,224,138,.12); border: 1px solid rgba(94,224,138,.45); }
+  #idBanner b { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 20px; letter-spacing: 1px; }
+
+  /* cards */
+  .grid { display: grid; gap: 18px; margin-top: 38px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 900px) { .g3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 26px; }
+  .card h3 { font-size: 20px; margin: 10px 0 6px; }
+  .card p { color: var(--dim); font-size: 16px; }
+  .icon { font-size: 30px; }
+
+  .shots { display: flex; gap: 22px; align-items: flex-end; margin-top: 40px; }
+  .shots img { border-radius: 18px; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .shots .tv { flex: 1; min-width: 0; width: 100%; }
+  .shots .phone { width: 210px; flex: none; }
+  @media (max-width: 720px) { .shots .phone { display: none; } }
+
+  /* download */
+  .dl .card { display: flex; flex-direction: column; }
+  .dl .card .btn { margin-top: auto; align-self: flex-start; }
+  .dl .card p { margin-bottom: 18px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.1); color: var(--dim); margin-left: 6px; vertical-align: 3px; }
+  code { background: rgba(255,255,255,.1); padding: 2px 8px; border-radius: 6px; font-size: 15px; word-break: break-all; }
+
+  /* pricing */
+  .price { display: flex; flex-direction: column; }
+  .price.best { border: 2px solid var(--peri); background: linear-gradient(180deg, rgba(61,90,254,.22), var(--panel)); }
+  .price .amount { font-size: 44px; font-weight: 800; margin: 8px 0 2px; letter-spacing: -1px; }
+  .price .per { color: var(--dim); font-size: 15px; }
+  .price ul { list-style: none; margin: 20px 0 26px; }
+  .price li { padding: 6px 0 6px 28px; position: relative; color: var(--dim); }
+  .price li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .price .btn { margin-top: auto; text-align: center; }
+  .small { font-size: 14px; color: var(--dim); margin-top: 18px; }
+
+  /* steps */
+  .steps { counter-reset: s; }
+  .steps .card { position: relative; padding-top: 58px; }
+  .steps .card::before { counter-increment: s; content: counter(s); position: absolute; top: 20px; left: 26px; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--blue); color: #fff; font-weight: 700; text-align: center; line-height: 30px; font-size: 15px; }
+
+  /* faq + legal */
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; margin-top: 12px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 17px; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; float: right; color: var(--dim); font-size: 22px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p, details li { color: var(--dim); margin-top: 10px; font-size: 16px; }
+  details ul { margin-left: 20px; }
+  .warn { margin-top: 30px; padding: 22px 26px; border-radius: 18px; background: rgba(255,200,61,.08); border: 1px solid rgba(255,200,61,.4); }
+  .warn b { color: var(--amber); }
+
+  footer { border-top: 1px solid var(--line); padding: 36px 0 50px; color: var(--dim); font-size: 14px; }
+  footer .wrap { display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="logo.png" alt="">Seba Software</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#download">Download</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <a class="cta" href="#pricing">Buy license</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <video src="earth.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
+  <div class="wrap">
+    <div class="eyebrow">Seba IPTV Player</div>
+    <h1>Your own playlist.<br><span>On every screen.</span></h1>
+    <p>A fast, clean player for your M3U and Xtream playlists – on Android, Android TV, LG TV and iPhone.</p>
+    <div class="row">
+      <a class="btn primary" href="#download">Try free for 7 days</a>
+      <a class="btn ghost" href="#pricing">See pricing</a>
+    </div>
+    <div class="note">The app contains no channels. You use your own playlist from your provider.</div>
+  </div>
+</div>
+
+<div id="idBanner"><div class="in">
+  Your device ID: <b id="idValue"></b><br>
+  <span style="color:var(--dim);font-size:15px">Choose a license below – the ID is sent automatically with your purchase. If you are asked for it at checkout, enter it in the "Device ID" field.</span>
+</div></div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">Features</div>
+    <h2>Everything you need – nothing you don't</h2>
+    <p class="lead">Seba IPTV Player is built to be easy to use, even with a TV remote.</p>
+    <div class="grid g3">
+      <div class="card"><div class="icon">📋</div><h3>Multiple playlists</h3><p>Add M3U links or Xtream Codes logins and switch between them with one tap.</p></div>
+      <div class="card"><div class="icon">🗂</div><h3>Clear categories</h3><p>Live TV, movies and series are sorted automatically, with groups, search and favorites.</p></div>
+      <div class="card"><div class="icon">📅</div><h3>TV guide (EPG)</h3><p>See what's on now and next, right in the channel list and in full screen.</p></div>
+      <div class="card"><div class="icon">📺</div><h3>Made for TV</h3><p>Full remote control: zap with the arrows, type channel numbers and use the color buttons.</p></div>
+      <div class="card"><div class="icon">🎧</div><h3>Audio and subtitles</h3><p>Choose audio tracks and subtitles, and see the stream quality in the player.</p></div>
+      <div class="card"><div class="icon">🔒</div><h3>No account, no tracking</h3><p>Your playlists are stored only on your own device. We never see what you watch.</p></div>
+    </div>
+    <div class="shots">
+      <img class="tv" src="tv.jpg" alt="Seba IPTV Player on a TV">
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="eyebrow">Download</div>
+    <h2>Try it free for 7 days</h2>
+    <p class="lead">Install the app, add your playlist and use every feature for 7 days. No payment or account needed to try it.</p>
+    <div class="grid g3 dl">
+      <div class="card">
+        <div class="icon">🤖</div>
+        <h3>Android and Android TV</h3>
+        <p>For phones, tablets, Android TV, Google TV and TV boxes. On a TV, use the <b>Downloader</b> app and enter:<br><code id="apkUrl"></code></p>
+        <a class="btn blue" id="apkLink" href="#">Download APK</a>
+      </div>
+      <div class="card">
+        <div class="icon">📺</div>
+        <h3>LG Smart TV <span class="tag">webOS 4+</span></h3>
+        <p>For LG TVs from 2018 and newer. Installation needs a little help – contact us and we will guide you through it.</p>
+        <a class="btn ghost" href="#contact">Contact us</a>
+      </div>
+      <div class="card">
+        <div class="icon">🍏</div>
+        <h3>iPhone and iPad <span class="tag">Coming soon</span></h3>
+        <p>The iPhone version is ready and in testing. Write to us if you would like to hear when it is available.</p>
+        <a class="btn disabled" href="#">Coming soon</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="eyebrow">Pricing</div>
+    <h2>One license per device</h2>
+    <p class="lead">When the trial ends, unlock the app with an activation code. Pay once – no automatic renewal.</p>
+    <div class="grid g2">
+      <div class="card price">
+        <h3>1 year</h3>
+        <div class="amount" data-cfg="priceYear">–</div>
+        <div class="per">per device</div>
+        <ul>
+          <li>All features for 12 months</li>
+          <li>Unlimited playlists</li>
+          <li>Free updates</li>
+        </ul>
+        <a class="btn ghost" data-buy="stripeYear" href="#">Buy 1 year</a>
+      </div>
+      <div class="card price best">
+        <h3>Lifetime <span class="tag" style="background:var(--peri);color:#0B0D17">Best value</span></h3>
+        <div class="amount" data-cfg="priceLife">–</div>
+        <div class="per">per device, pay only once</div>
+        <ul>
+          <li>All features – forever</li>
+          <li>Unlimited playlists</li>
+          <li>Free updates</li>
+        </ul>
+        <a class="btn primary" data-buy="stripeLife" href="#">Buy lifetime</a>
+      </div>
+    </div>
+    <p class="small">Secure payment via Stripe (cards, Apple Pay, Google Pay and local payment methods). The license is valid for the device whose ID you enter.
+      Your code is sent by email, usually within a short time.</p>
+  </div>
+</section>
+
+<section id="activation">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Activate in 4 steps</h2>
+    <div class="grid g2 steps">
+      <div class="card"><h3>Find your device ID</h3><p>Open the app and tap the text under the name "Seba IPTV Player" (or the 👤 button). Your ID looks like this: <code>A1B2-C3D4</code></p></div>
+      <div class="card"><h3>Buy a license</h3><p>Choose 1 year or lifetime above and enter your device ID at checkout.</p></div>
+      <div class="card"><h3>Receive your code</h3><p>You get an activation code by email. It only works on the device that matches your ID.</p></div>
+      <div class="card"><h3>Enter the code</h3><p>Paste the code into the app and press "Activate". Done – your playlists and favorites stay as they are.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>Frequently asked questions</h2>
+    <details><summary>Do I get TV channels with the app?</summary>
+      <p>No. Seba IPTV Player is only a player and contains no channels, movies or playlists. You need your own playlist (M3U link or Xtream login) from a legal provider.</p></details>
+    <details><summary>Which formats are supported?</summary>
+      <p>M3U and M3U8 playlists, Xtream Codes logins and XMLTV TV guides. HLS (m3u8) streams work on all devices; Android also plays most other stream formats.</p></details>
+    <details><summary>Can I use one license on several devices?</summary>
+      <p>A license is valid for one device. If you have several TVs or phones, you need a license for each.</p></details>
+    <details><summary>What happens if I replace or reset my device?</summary>
+      <p>The device will get a new ID. Write to us with your receipt and we will help you.</p></details>
+    <details><summary>Can I try the app before paying?</summary>
+      <p>Yes – every feature is free for 7 days after installing. You only pay if you want to keep using it.</p></details>
+    <details><summary>Does the 1-year license renew automatically?</summary>
+      <p>No. There is no subscription. When the year is over, you can buy a new code if you want to continue.</p></details>
+    <details><summary>Which languages does the app support?</summary>
+      <p>The app is in English, and in Danish on devices set to Danish.</p></details>
+  </div>
+</section>
+
+<section id="terms" style="padding-top:20px">
+  <div class="wrap">
+    <div class="eyebrow">Legal</div>
+    <h2>Terms, privacy and disclaimer</h2>
+    <div class="warn"><b>Important:</b> Seba IPTV Player is supplied without any content. Seba Software does not sell, provide or recommend playlists, IPTV subscriptions or TV channels.
+      You are responsible for making sure that the content you play is legal and that you have the right to watch it.</div>
+    <details><summary>Terms of sale</summary>
+      <ul>
+        <li>Seller: Seba Software, Denmark<span data-cfg-inline="cvr">, company no. (CVR) </span>. Contact: <span data-cfg="email">see below</span>.</li>
+        <li>You buy a digital license (activation code) for Seba IPTV Player for one device, for the period you choose. Prices are shown at checkout in the currency stated.</li>
+        <li>Payment is handled by Stripe. Seba Software never sees your card details.</li>
+        <li>The code is delivered by email, usually the same day. If you have not received it within 24 hours, please contact us.</li>
+        <li>Right of withdrawal: you have a 14-day right of withdrawal until the code has been delivered. By purchasing, you agree that the code is delivered immediately and that the right of withdrawal ends when it has been delivered. The app can be tried free for 7 days before buying.</li>
+        <li>If your code does not work or the app has a fault, we will fix it, send a new code or refund you. Complaints can be sent to the contact address.</li>
+        <li>We cannot guarantee that specific playlists or channels will work, as they are supplied by third parties.</li>
+        <li>These terms are governed by Danish law. EU consumers can also use the EU's online dispute resolution platform.</li>
+      </ul></details>
+    <details><summary>Privacy policy</summary>
+      <ul>
+        <li>The app has no user account and sends no information about what you watch. Playlists, favorites and settings are stored only on your own device.</li>
+        <li>The app only downloads the playlists, TV guides and logos that you have added yourself.</li>
+        <li>When you buy, we process your email address, your device ID and payment details from Stripe in order to deliver your code and keep accounting records. This data is kept for as long as accounting law requires.</li>
+        <li>You can always ask to see or delete your data by contacting us. You can complain to the Danish Data Protection Agency (Datatilsynet).</li>
+        <li>This website uses no cookies and no tracking.</li>
+      </ul></details>
+  </div>
+</section>
+
+<section id="contact" style="padding-top:40px">
+  <div class="wrap">
+    <div class="card" style="text-align:center;padding:44px 26px">
+      <h2>Questions or need help?</h2>
+      <p class="lead" style="margin:0 auto 22px">Write to us – we usually reply within a day.</p>
+      <a class="btn primary" id="mailBtn" href="#">Contact us</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© <span id="year"></span> Seba Software<span data-cfg-inline="cvr"> · CVR </span></div>
+    <div><a href="#terms">Terms and privacy</a></div>
+  </div>
+</footer>
+<script>
+(function () {
+  var C = CONFIG;
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // device ID from the app: ...?id=A1B2-C3D4
+  var m = /[?&]id=([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/.exec(location.search);
+  var id = m ? m[1].toUpperCase() : '';
+  if (id && id.indexOf('-') < 0) id = id.slice(0, 4) + '-' + id.slice(4);
+  if (id) {
+    document.getElementById('idValue').textContent = id;
+    document.getElementById('idBanner').style.display = 'block';
+  }
+
+  // prices
+  [].forEach.call(document.querySelectorAll('[data-cfg]'), function (el) {
+    var v = C[el.getAttribute('data-cfg')];
+    if (v) el.textContent = v;
+    else if (el.classList.contains('amount')) { el.textContent = 'Price coming soon'; el.style.fontSize = '28px'; }
+  });
+  [].forEach.call(document.querySelectorAll('[data-cfg-inline]'), function (el) {
+    var v = C[el.getAttribute('data-cfg-inline')];
+    if (v) el.textContent = el.textContent + v; else el.textContent = '';
+  });
+
+  // buy buttons (Stripe) – the device ID is passed along as client_reference_id
+  [].forEach.call(document.querySelectorAll('[data-buy]'), function (el) {
+    var link = C[el.getAttribute('data-buy')];
+    if (!link) { el.className = 'btn disabled'; el.textContent = 'Coming soon'; return; }
+    if (id) link += (link.indexOf('?') < 0 ? '?' : '&') + 'client_reference_id=' + encodeURIComponent(id);
+    el.href = link;
+  });
+
+  // download
+  var apk = new URL(C.apk, location.href).href;
+  document.getElementById('apkLink').href = C.apk;
+  document.getElementById('apkUrl').textContent = apk.replace(/^https?:\/\//, '');
+
+  // contact
+  var mail = document.getElementById('mailBtn');
+  if (C.email) { mail.href = 'mailto:' + C.email + (id ? '?subject=' + encodeURIComponent('Seba IPTV Player – ' + id) : ''); mail.textContent = C.email; }
+  else { mail.className = 'btn disabled'; mail.textContent = 'Contact email coming soon'; }
+})();
+</script>
+</body>
+</html>

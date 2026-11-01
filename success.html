@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your activation code – Seba Software</title>
+<link rel="icon" href="favicon.png">
+<script>
+  /* ================= SETTINGS ================= */
+  var WORKER_URL = "https://seba-license.baturserdar83.workers.dev";
+  var SUPPORT = "sebasoftware.support@gmail.com";
+</script>
+<style>
+  :root { --bg:#070912; --panel:rgba(20,25,44,.85); --line:rgba(255,255,255,.12); --text:#F3F5FF; --dim:rgba(243,245,255,.68);
+          --peri:#8FA6FF; --green:#5EE08A; --red:#FF8A80; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg) radial-gradient(ellipse at top, rgba(61,90,254,.25), transparent 60%); color:var(--text); min-height:100vh;
+         font:17px/1.6 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; display:flex; align-items:center; justify-content:center; padding:24px; }
+  a { color:var(--peri); }
+  .card { width:100%; max-width:640px; background:var(--panel); border:1px solid var(--line); border-radius:26px; padding:36px 30px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; margin-bottom:26px; }
+  .brand img { width:36px; height:36px; border-radius:10px; }
+  h1 { font-size:28px; line-height:1.25; margin-bottom:8px; }
+  p { color:var(--dim); }
+  .code { margin:24px 0 12px; padding:18px; border-radius:16px; background:rgba(255,255,255,.08); border:1px solid rgba(94,224,138,.45);
+          font:600 19px/1.55 ui-monospace,Menlo,Consolas,monospace; letter-spacing:.5px; word-break:break-all; user-select:all; }
+  .btn { display:inline-block; padding:13px 24px; border-radius:999px; background:#fff; color:#0B0D17; font-weight:600; border:0; cursor:pointer; font-size:16px; }
+  .facts { margin:20px 0; display:grid; grid-template-columns:auto 1fr; gap:6px 18px; font-size:16px; }
+  .facts dt { color:var(--dim); }
+  ol { margin:12px 0 0 22px; color:var(--dim); }
+  ol li { margin:6px 0; }
+  .spin { width:40px; height:40px; border-radius:50%; border:4px solid rgba(255,255,255,.2); border-top-color:#fff; animation:s 1s linear infinite; margin:20px 0; }
+  @keyframes s { to { transform:rotate(360deg); } }
+  .err h1 { color:var(--red); }
+  .hide { display:none; }
+  .note { font-size:14px; margin-top:22px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand"><img src="logo.png" alt="">Seba Software</div>
+
+  <div id="loading">
+    <h1>Thank you for your purchase!</h1>
+    <p>Creating your activation code…</p>
+    <div class="spin"></div>
+  </div>
+
+  <div id="done" class="hide">
+    <h1>Your activation code is ready 🎉</h1>
+    <p>Copy the code below and paste it into the app.</p>
+    <div class="code" id="code"></div>
+    <button class="btn" id="copy">Copy code</button>
+    <dl class="facts">
+      <dt>Device ID</dt><dd id="dev"></dd>
+      <dt>License</dt><dd id="plan"></dd>
+    </dl>
+    <h3>How to activate</h3>
+    <ol>
+      <li>Open <b>Seba IPTV Player</b> on the device with this ID.</li>
+      <li>Tap the text under the app name (or 👤) to open the activation screen.</li>
+      <li>Paste the code and press <b>Activate</b>.</li>
+    </ol>
+    <p class="note">Save the code somewhere safe (for example take a screenshot). If you lose it, write to
+      <a class="mail" href="#"></a> with your receipt and we will help you.</p>
+  </div>
+
+  <div id="error" class="hide err">
+    <h1 id="errTitle">Something went wrong</h1>
+    <p id="errText"></p>
+    <p class="note">Your payment is safe. Write to <a class="mail" href="#"></a> and include your receipt – we will send your code by email.</p>
+  </div>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  [].forEach.call(document.querySelectorAll('.mail'), function (a) { a.textContent = SUPPORT; a.href = 'mailto:' + SUPPORT; });
+  function show(id) { ['loading', 'done', 'error'].forEach(function (x) { $(x).className = x === id ? '' : 'hide'; }); if (id === 'error') $('error').className = 'err'; }
+  function fail(title, text) { $('errTitle').textContent = title; $('errText').textContent = text; show('error'); }
+
+  var m = /[?&]session_id=([^&]+)/.exec(location.search);
+  if (!m) { fail('No purchase found', 'This page is opened automatically after a payment.'); return; }
+  if (!WORKER_URL) { fail('Your code will be sent by email', 'Automatic delivery is not switched on yet. You will receive your code by email shortly.'); return; }
+
+  var tries = 0;
+  function load() {
+    fetch(WORKER_URL.replace(/\/$/, '') + '/code?session_id=' + encodeURIComponent(decodeURIComponent(m[1])))
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        var j = res.j;
+        if (j.code) {
+          $('code').textContent = j.code;
+          $('dev').textContent = j.device;
+          $('plan').textContent = j.plan === 'lifetime' ? 'Lifetime' : '1 year' + (j.expires ? ' (valid until ' + j.expires + ')' : '');
+          show('done');
+          return;
+        }
+        if (j.error === 'not_paid' && tries++ < 10) { setTimeout(load, 3000); return; }
+        if (j.error === 'bad_device') fail('Please check your device ID',
+          'The device ID you entered ("' + (j.device || '') + '") is not valid. It looks like A1B2-C3D4 and is shown on the activation screen of the app. Write to us with the correct ID and we will send your code.');
+        else if (j.error === 'not_paid') fail('Payment still processing', 'Your payment has not been confirmed yet. Please reload this page in a minute.');
+        else fail('Something went wrong', 'We could not create your code automatically.');
+      })
+      .catch(function () {
+        if (tries++ < 3) { setTimeout(load, 2000); return; }
+        fail('Connection problem', 'We could not reach the licence server. Please reload this page.');
+      });
+  }
+  load();
+
+  $('copy').onclick = function () {
+    var t = $('code').textContent, b = $('copy');
+    function ok() { b.textContent = 'Copied ✓'; setTimeout(function () { b.textContent = 'Copy code'; }, 2000); }
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, function () {});
+    else { var r = document.createRange(); r.selectNodeContents($('code')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); ok(); }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="test1" group-title="Test streams",Big Buck Bunny (HLS)
 https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
-#EXTINF:-1 tvg-id="test2" group-title="Test streams",Apple BipBop (HLS)
+#EXTINF:-1 tvg-id="test2" group-title="Test streams",Apple BipBop (HLS fMP4)
 https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8
-#EXTINF:-1 tvg-id="test3" group-title="Test streams",Sintel (HLS)
-https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
-#EXTINF:-1 group-title="Movies",Big Buck Bunny (MP4)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
-#EXTINF:-1 group-title="Movies",Elephants Dream (MP4)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4
-#EXTINF:-1 group-title="Movies",Tears of Steel (MP4)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4
+#EXTINF:-1 tvg-id="test3" group-title="Test streams",Apple BipBop 16x9 (HLS TS)
+https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8
+#EXTINF:-1 tvg-id="test4" group-title="Test streams",Apple BipBop Advanced (HLS TS)
+https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8
+#EXTINF:-1 group-title="Movies",Sintel trailer (MP4)
+https://media.w3.org/2010/05/sintel/trailer.mp4
+#EXTINF:-1 group-title="Movies",Big Buck Bunny trailer (MP4)
+https://media.w3.org/2010/05/bunny/trailer.mp4

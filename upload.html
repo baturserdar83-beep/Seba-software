@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload playlist – Seba IPTV Player</title>
+<meta name="description" content="Send your own M3U link or Xtream Codes login to Seba IPTV Player on your TV or phone using the device ID shown in the app.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.png">
+<style>
+  :root {
+    --bg: #070912; --panel: rgba(20,25,44,.72); --line: rgba(255,255,255,.12);
+    --text: #F3F5FF; --dim: rgba(243,245,255,.68); --blue: #3D5AFE; --peri: #8FA6FF;
+    --amber: #FFC83D; --green: #5EE08A; --red: #FF8A80;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 17px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-image: radial-gradient(1200px 600px at 80% -10%, rgba(61,90,254,.22), transparent 60%); min-height: 100vh; }
+  a { color: var(--peri); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  header { border-bottom: 1px solid var(--line); background: rgba(7,9,18,.72); }
+  header .wrap { display: flex; align-items: center; height: 66px; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; color: var(--text); }
+  .brand img { width: 36px; height: 36px; border-radius: 10px; }
+  .brand:hover { text-decoration: none; }
+  main { padding: 40px 0 70px; }
+  h1 { font-size: clamp(28px, 6vw, 38px); line-height: 1.15; letter-spacing: -.5px; margin-bottom: 10px; }
+  .lead { color: var(--dim); margin-bottom: 28px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 26px; }
+  label { display: block; font-size: 14px; font-weight: 600; color: var(--dim); margin: 18px 0 6px; letter-spacing: .3px; }
+  label:first-child { margin-top: 0; }
+  input { width: 100%; height: 52px; padding: 0 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.06); color: var(--text); font: inherit; outline: none; }
+  input:focus { border-color: var(--peri); box-shadow: 0 0 0 3px rgba(143,166,255,.25); }
+  input.id { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 22px; letter-spacing: 2px; text-transform: uppercase; }
+  .hint { font-size: 14px; color: var(--dim); margin-top: 6px; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(255,255,255,.06); padding: 6px; border-radius: 16px; margin-top: 22px; }
+  .tabs button { height: 46px; border: 0; border-radius: 12px; background: transparent; color: var(--dim); font: inherit; font-weight: 600; cursor: pointer; }
+  .tabs button.on { background: #fff; color: #0B0D17; }
+  .hide { display: none; }
+  .btn { width: 100%; height: 56px; margin-top: 26px; border: 0; border-radius: 999px; background: #fff; color: #0B0D17; font: inherit; font-weight: 700; cursor: pointer; }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .msg { margin-top: 18px; padding: 14px 18px; border-radius: 14px; display: none; }
+  .msg.ok { display: block; background: rgba(94,224,138,.12); border: 1px solid rgba(94,224,138,.45); }
+  .msg.bad { display: block; background: rgba(255,138,128,.12); border: 1px solid rgba(255,138,128,.45); }
+  .steps { margin-top: 30px; color: var(--dim); font-size: 15px; }
+  .steps ol { padding-left: 20px; }
+  .steps li { margin: 6px 0; }
+  .legal { margin-top: 22px; font-size: 13px; color: var(--dim); }
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="./"><img src="favicon.png" alt="">Seba IPTV Player</a></div></header>
+<main><div class="wrap">
+  <h1>Upload your playlist</h1>
+  <p class="lead">Send your M3U link or Xtream Codes login to the app on your TV or phone, no remote typing needed.</p>
+
+  <form class="card" id="f" novalidate>
+    <label for="dev">Device ID</label>
+    <input id="dev" class="id" placeholder="A1B2-C3D4" maxlength="9" autocomplete="off" spellcheck="false" inputmode="text">
+    <div class="hint">Shown in the app under Add playlist → Upload from phone or PC.</div>
+
+    <label for="name">Playlist name (optional)</label>
+    <input id="name" placeholder="My playlist" maxlength="60" autocomplete="off">
+
+    <div class="tabs" role="tablist">
+      <button type="button" id="tX" class="on" role="tab">Xtream login</button>
+      <button type="button" id="tM" role="tab">M3U link</button>
+    </div>
+
+    <div id="pX">
+      <label for="srv">Server / DNS</label>
+      <input id="srv" placeholder="http://host:8080" autocomplete="off" spellcheck="false" inputmode="url">
+      <label for="usr">Username</label>
+      <input id="usr" autocomplete="off" spellcheck="false" autocapitalize="off">
+      <label for="pw">Password</label>
+      <input id="pw" autocomplete="off" spellcheck="false" autocapitalize="off">
+    </div>
+    <div id="pM" class="hide">
+      <label for="url">M3U link</label>
+      <input id="url" placeholder="http://example.com/get.php?username=...&amp;password=...&amp;type=m3u_plus" autocomplete="off" spellcheck="false" inputmode="url">
+    </div>
+
+    <label for="epg">TV guide (EPG) link (optional)</label>
+    <input id="epg" placeholder="http://.../xmltv.php" autocomplete="off" spellcheck="false" inputmode="url">
+
+    <button class="btn" id="go" type="submit">Send to my device</button>
+    <div class="msg" id="msg"></div>
+  </form>
+
+  <div class="steps">
+    <b>How it works</b>
+    <ol>
+      <li>Open Seba IPTV Player and choose <b>Add playlist → Upload from phone or PC</b>.</li>
+      <li>Enter the device ID shown there (or scan the QR code, which fills it in for you).</li>
+      <li>Add your login or link and press <b>Send</b>. The playlist appears in the app within a few seconds.</li>
+    </ol>
+  </div>
+  <p class="legal">Your details are only kept until the app collects them, at most 3 days, and are then deleted from our server.
+    Seba IPTV Player contains no channels or content; use only playlists from a legal provider.</p>
+</div></main>
+<script>
+(function () {
+  var SERVER = 'https://seba-license.baturserdar83.workers.dev';
+  var $ = function (id) { return document.getElementById(id); };
+  var mode = 'xtream';
+  function tab(m) {
+    mode = m;
+    $('tX').className = m === 'xtream' ? 'on' : ''; $('tM').className = m === 'url' ? 'on' : '';
+    $('pX').className = m === 'xtream' ? '' : 'hide'; $('pM').className = m === 'url' ? '' : 'hide';
+  }
+  $('tX').onclick = function () { tab('xtream'); };
+  $('tM').onclick = function () { tab('url'); };
+
+  function fmt(v) {
+    var h = String(v || '').toUpperCase().replace(/O/g, '0').replace(/[^0-9A-F]/g, '').slice(0, 8);
+    return h.length > 4 ? h.slice(0, 4) + '-' + h.slice(4) : h;
+  }
+  var q = /[?&](?:device|id)=([^&#]+)/i.exec(location.search);
+  if (q) $('dev').value = fmt(decodeURIComponent(q[1]));
+  $('dev').addEventListener('input', function () { var p = this.selectionStart === this.value.length; this.value = fmt(this.value); if (p) this.selectionStart = this.selectionEnd = this.value.length; });
+
+  function say(text, ok) { var m = $('msg'); m.textContent = text; m.className = 'msg ' + (ok ? 'ok' : 'bad'); }
+
+  $('f').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var dev = fmt($('dev').value);
+    if (dev.length !== 9) { say('Enter the 8-character device ID from the app, e.g. A1B2-C3D4.'); $('dev').focus(); return; }
+    var body = { device: dev, name: $('name').value.trim(), type: mode, epg: $('epg').value.trim() || null };
+    if (mode === 'xtream') {
+      body.server = $('srv').value.trim(); body.username = $('usr').value.trim(); body.password = $('pw').value.trim();
+      if (!body.server || !body.username || !body.password) { say('Fill in server, username and password.'); return; }
+    } else {
+      body.url = $('url').value.trim();
+      if (!/^https?:\/\//i.test(body.url)) { say('Enter a link that starts with http:// or https://'); return; }
+    }
+    $('go').disabled = true; $('go').textContent = 'Sending...';
+    fetch(SERVER + '/pl/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (r) {
+        if (r.ok && r.j.ok) {
+          say('Sent! Open the app (or keep the upload window open) and the playlist appears within a few seconds.', true);
+          ['srv', 'usr', 'pw', 'url', 'epg', 'name'].forEach(function (id) { $(id).value = ''; });
+        } else {
+          var e = r.j && r.j.error;
+          say(e === 'bad_device' ? 'That device ID is not valid.' : e === 'bad_url' ? 'The M3U link is not valid.' :
+              e === 'bad_xtream' ? 'Check the server address, username and password.' : e === 'not_configured' ? 'Upload is not switched on yet. Please try again later.' :
+              'Something went wrong. Please try again.');
+        }
+      })
+      .catch(function () { say('No connection to the server. Please try again.'); })
+      .then(function () { $('go').disabled = false; $('go').textContent = 'Send to my device'; });
+  });
+})();
+</script>
+</body>
+</html>

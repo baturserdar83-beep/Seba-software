@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seba Regnskab – enkelt regnskabsprogram til foreninger</title>
+<meta name="description" content="Seba Regnskab er et dansk regnskabsprogram til foreninger og klubber. Bogføring, kontoplan, årsregnskab, moms, import fra banken og bilag fra mobilen. Prøv gratis i 14 dage.">
+<link rel="icon" href="icon.png">
+<style>
+  :root{--ink:#0f172a;--ink2:#334155;--muted:#64748b;--line:#e2e8f0;--bg:#f6f8fc;--accent:#2563eb;--accent2:#1d4ed8;--soft:#eff4ff;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink)}
+  *{box-sizing:border-box} body{margin:0;background:#fff;line-height:1.55}
+  a{color:var(--accent)} img{max-width:100%;display:block}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  header{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
+  header .wrap{display:flex;align-items:center;gap:14px;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:18px;color:var(--ink);text-decoration:none}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  header nav{margin-left:auto;display:flex;gap:22px;align-items:center}
+  header nav a{color:var(--ink2);text-decoration:none;font-weight:550;font-size:15px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:12px 20px;font-weight:700;text-decoration:none;border:1px solid var(--line);color:var(--ink2);background:#fff;cursor:pointer;font-size:15px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff} .btn.primary:hover{background:var(--accent2)}
+  .btn.sm{padding:8px 14px;font-size:14px}
+  .hero{background:linear-gradient(180deg,#eef4ff 0%,#fff 100%);padding:64px 0 30px}
+  .hero h1{font-size:46px;line-height:1.1;margin:0 0 16px;letter-spacing:-.02em;max-width:760px}
+  .hero p.lead{font-size:20px;color:var(--ink2);max-width:680px;margin:0 0 26px}
+  .hero .ctas{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .hero small{color:var(--muted);display:block;margin-top:12px}
+  .shot{margin-top:40px;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -20px rgba(15,23,42,.35)}
+  section{padding:70px 0} section.alt{background:var(--bg)}
+  h2{font-size:32px;margin:0 0 10px;letter-spacing:-.01em} .sub{color:var(--muted);font-size:18px;margin:0 0 34px;max-width:720px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+  .feat .ic{width:42px;height:42px;border-radius:11px;background:var(--soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:12px}
+  .feat h3{margin:0 0 6px;font-size:18px} .feat p{margin:0;color:var(--ink2);font-size:15px}
+  .split{display:grid;grid-template-columns:1fr 1.25fr;gap:44px;align-items:center;margin-bottom:60px}
+  .split.rev{grid-template-columns:1.25fr 1fr} .split.rev .txt{order:2}
+  .split img{border-radius:12px;border:1px solid var(--line);box-shadow:0 18px 40px -18px rgba(15,23,42,.3)}
+  .split h3{font-size:26px;margin:0 0 10px} .split p{color:var(--ink2);font-size:17px}
+  .split ul{padding-left:20px;color:var(--ink2)} .split li{margin:5px 0}
+  .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  .price{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;display:flex;flex-direction:column}
+  .price.best{border:2px solid var(--accent);box-shadow:0 20px 40px -20px rgba(37,99,235,.45);position:relative}
+  .price.best::before{content:"Mest populær";position:absolute;top:-13px;left:24px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
+  .price .btn{justify-content:center} .price h3{margin:0;font-size:18px} .price .amt{font-size:40px;font-weight:800;margin:10px 0 2px;letter-spacing:-.02em}
+  .price .per{color:var(--muted);margin-bottom:16px} .price ul{padding-left:18px;color:var(--ink2);margin:0 0 22px;flex:1} .price li{margin:6px 0}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;counter-increment:s}
+  .step::before{content:counter(s);display:inline-flex;width:30px;height:30px;border-radius:99px;background:var(--accent);color:#fff;font-weight:800;align-items:center;justify-content:center;margin-bottom:10px}
+  .step b{display:block;margin-bottom:4px}
+  details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:650;font-size:16px} details p{color:var(--ink2);margin:10px 0 0}
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:14px}
+  footer .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+  @media (max-width:900px){.grid3,.prices,.steps{grid-template-columns:1fr}.split,.split.rev{grid-template-columns:1fr}.split.rev .txt{order:0}.hero h1{font-size:34px}header nav a:not(.btn){display:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="#"><img src="icon.png" alt="">Seba Regnskab</a>
+  <nav><a href="#funktioner">Funktioner</a><a href="#priser">Priser</a><a href="#faq">Spørgsmål</a><a class="btn sm primary" href="SebaRegnskab.zip" download>Prøv gratis</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <h1>Regnskab til foreningen – uden besvær</h1>
+  <p class="lead">Seba Regnskab er et enkelt, dansk regnskabsprogram til foreninger og klubber. Bogfør på sekunder, hent kontoudtoget fra banken, tag billeder af bilag med mobilen – og få årsregnskabet klar til generalforsamlingen.</p>
+  <div class="ctas"><a class="btn primary" href="SebaRegnskab.zip" download>⬇ Hent gratis prøveversion</a><a class="btn" href="#priser">Se priser</a></div>
+  <small>14 dages gratis prøveperiode · Ingen kreditkort · Windows 10 og 11</small>
+  <div class="shot"><img src="overblik.jpg" alt="Seba Regnskab – overblik med indtægter, udgifter og resultat" loading="eager"></div>
+</div></div>
+
+<section id="funktioner"><div class="wrap">
+  <h2>Alt hvad kassereren har brug for</h2>
+  <p class="sub">Bygget til frivillige kasserere, der vil have styr på økonomien uden at være bogholdere.</p>
+  <div class="grid3">
+    <div class="feat"><div class="ic">✎</div><h3>Hurtig bogføring</h3><p>Skriv “kont” eller “43” – programmet finder kontoen. Enter bogfører, og næste postering er klar.</p></div>
+    <div class="feat"><div class="ic">⇪</div><h3>Import fra banken</h3><p>Indlæs kontoudtoget som CSV eller Excel. Programmet foreslår konti, springer dubletter over og husker dine valg.</p></div>
+    <div class="feat"><div class="ic">📱</div><h3>Bilag fra mobilen</h3><p>Scan en QR-kode, tag et billede af kvitteringen – dato og beløb aflæses automatisk, og bilaget gemmes ved posteringen.</p></div>
+    <div class="feat"><div class="ic">▤</div><h3>Årsregnskab og balance</h3><p>Resultatopgørelse og balance med ét klik – for hele året, et kvartal eller en måned. Udskriv eller gem som PDF.</p></div>
+    <div class="feat"><div class="ic">≣</div><h3>Færdig kontoplan</h3><p>Start med en kontoplan lavet til foreninger: kontingenter, tilskud, arrangementer, husleje, forsikringer m.m.</p></div>
+    <div class="feat"><div class="ic">🔒</div><h3>Dine data – på din pc</h3><p>Ingen sky og intet abonnement på login. Alt gemmes lokalt med automatisk daglig sikkerhedskopi.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <div class="split"><div class="txt"><h3>Bogføring, der føles let</h3><p>Ét skærmbillede til alt: dato, konto, beløb og tekst. Søg i alle posteringer, ret med et klik, og eksportér til Excel når revisoren spørger.</p>
+    <ul><li>Søg på kontonummer eller navn</li><li>Kontokort med løbende saldo</li><li>Bank, kasse og MobilePay som modkonti</li></ul></div>
+    <img src="bogforing.jpg" alt="Bogføring med søgning på konti" loading="lazy"></div>
+  <div class="split rev"><div class="txt"><h3>Hent kontoudtoget – bogfør alt på én gang</h3><p>Træk filen fra netbanken ind i programmet. Dato, tekst og beløb findes automatisk, og hver linje får et kontoforslag. Du godkender, før noget bogføres.</p>
+    <ul><li>CSV og Excel fra danske banker</li><li>Dubletter og overførsler springes over</li><li>Husker dine valg til næste gang</li></ul></div>
+    <img src="import.jpg" alt="Import af kontoudtog fra banken" loading="lazy"></div>
+  <div class="split"><div class="txt"><h3>Bilag direkte fra mobilen</h3><p>Ingen app at installere. Scan QR-koden, tag billedet, og bilaget dukker op på pc'en med dato, beløb og et kontoforslag udfyldt.</p></div>
+    <img src="mobil.jpg" alt="Bilag fra mobilen via QR-kode" loading="lazy"></div>
+  <div class="split rev"><div class="txt"><h3>Klar til generalforsamlingen</h3><p>Resultatopgørelse og balance med foreningens navn og logo. Udskriv eller gem som PDF og send til bestyrelse og revisor.</p></div>
+    <img src="regnskab.jpg" alt="Resultatopgørelse og balance" loading="lazy"></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Kom i gang på 2 minutter</h2><p class="sub">Ingen installation, ingen konto, intet bøvl.</p>
+  <div class="steps">
+    <div class="step"><b>Hent programmet</b>Download zip-filen og pak den ud.</div>
+    <div class="step"><b>Start det</b>Dobbeltklik på Seba Regnskab. Programmet åbner i sit eget vindue.</div>
+    <div class="step"><b>Opret foreningen</b>Navn, år og banksaldo – kontoplanen er klar med det samme.</div>
+    <div class="step"><b>Bogfør</b>Brug alt gratis i 14 dage. Køb en licens, når du er overbevist.</div>
+  </div>
+</div></section>
+
+<section class="alt" id="priser"><div class="wrap">
+  <h2>Enkle priser</h2><p class="sub">Én licens dækker én forening på én computer. Alle priser er inkl. moms.</p>
+  <div class="prices">
+    <div class="price"><h3>Prøveversion</h3><div class="amt">0 kr.</div><div class="per">14 dage</div>
+      <ul><li>Alle funktioner</li><li>Ingen kreditkort</li><li>Efter 14 dage kan du stadig se og udskrive dit regnskab</li></ul>
+      <a class="btn" href="SebaRegnskab.zip" download>Hent gratis</a></div>
+    <div class="price best"><h3>1 år</h3><div class="amt" data-price="aar">299 kr.</div><div class="per">pr. år</div>
+      <ul><li>Alle funktioner</li><li>Alle opdateringer i perioden</li><li>Support på e-mail</li></ul>
+      <a class="btn primary buy" data-plan="aar" href="#">Køb 1 år</a></div>
+    <div class="price"><h3>Livstid</h3><div class="amt" data-price="livstid">749 kr.</div><div class="per">betal én gang</div>
+      <ul><li>Alle funktioner – for altid</li><li>Ingen årlig betaling</li><li>Support på e-mail</li></ul>
+      <a class="btn buy" data-plan="livstid" href="#">Køb livstid</a></div>
+  </div>
+  <p style="color:var(--muted);font-size:14px;margin-top:18px">Aktiveringskoden sendes automatisk på e-mail lige efter betalingen. Indsæt den i programmet under “Indtast aktiveringskode”.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2>Spørgsmål og svar</h2><p class="sub">Kan du ikke finde svaret? Skriv til <a href="mailto:support@sebasoftware.com">support@sebasoftware.com</a>.</p>
+  <details><summary>Hvilke computere virker Seba Regnskab på?</summary><p>Windows 10 og Windows 11. Programmet bruger Microsoft Edge, som allerede følger med Windows. Det kræver ingen installation og ingen administrator-rettigheder.</p></details>
+  <details><summary>Hvor gemmes mine data?</summary><p>På din egen computer i mappen Dokumenter\Seba Regnskab. Der laves automatisk en sikkerhedskopi hver dag, og du kan selv kopiere mappen til en USB-nøgle eller OneDrive. Vi har ikke adgang til dine data.</p></details>
+  <details><summary>Hvad sker der, når prøveperioden udløber?</summary><p>Programmet går i læsetilstand: du kan stadig se, udskrive og eksportere hele dit regnskab, men ikke bogføre nyt. Når du indtaster en aktiveringskode, fortsætter du præcis hvor du slap.</p></details>
+  <details><summary>Windows siger “Windows beskyttede din pc”, når jeg starter programmet?</summary><p>Det sker med nye programmer, der hentes fra internettet. Klik på “Flere oplysninger” og “Kør alligevel”. Du kan undgå beskeden ved at højreklikke på zip-filen, vælge Egenskaber, sætte flueben i “Fjern blokering” og derefter pakke den ud.</p></details>
+  <details><summary>Kan jeg importere fra min bank?</summary><p>Ja. Hent kontoudtoget i netbanken som CSV eller Excel (.xlsx) og træk filen ind i programmet. Det virker med de almindelige danske netbanker, og du kan selv pege på kolonnerne, hvis din bank laver filen på en særlig måde.</p></details>
+  <details><summary>Kan foreningen bruge moms?</summary><p>Ja. Momskoden sættes pr. konto, og momsregnskabet beregner salgsmoms, købsmoms og rubrikkerne til momsangivelsen. Er foreningen ikke momsregistreret, kan du bare lade det være.</p></details>
+  <details><summary>Kan vi flytte til en ny computer?</summary><p>Ja. Kopiér mappen Dokumenter\Seba Regnskab til den nye computer, start programmet og indtast aktiveringskoden igen.</p></details>
+</div></section>
+
+<footer><div class="wrap">
+  <div>© Seba Software · CVR 46892399</div>
+  <div><a href="mailto:support@sebasoftware.com">support@sebasoftware.com</a> · <a href="../">sebasoftware.com</a></div>
+</div></footer>
+
+<script>
+/* Indsæt jeres Stripe Payment Links her, når de er oprettet: */
+const STRIPE = { aar: '', livstid: '' };
+document.querySelectorAll('.buy').forEach(a => {
+  const url = STRIPE[a.dataset.plan];
+  a.href = url || `mailto:support@sebasoftware.com?subject=${encodeURIComponent('Køb af Seba Regnskab – ' + (a.dataset.plan === 'aar' ? '1 år' : 'livstid'))}`;
+  if (url) a.target = '_blank';
+});
+</script>
+</body>
+</html>

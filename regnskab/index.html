@@ -105,7 +105,7 @@
 </div></section>
 
 <section class="alt" id="priser"><div class="wrap">
-  <h2>Enkle priser</h2><p class="sub">Én licens dækker én forening på én computer. Alle priser er inkl. moms.</p>
+  <h2>Enkle priser</h2><p class="sub">Én licens dækker én forening på én computer. Seba Software er ikke momsregistreret, så der er ingen moms på priserne.</p>
   <div class="prices">
     <div class="price"><h3>Prøveversion</h3><div class="amt">0 kr.</div><div class="per">14 dage</div>
       <ul><li>Alle funktioner</li><li>Ingen kreditkort</li><li>Efter 14 dage kan du stadig se og udskrive dit regnskab</li></ul>
@@ -138,7 +138,7 @@
 
 <script>
 /* Indsæt jeres Stripe Payment Links her, når de er oprettet: */
-const STRIPE = { aar: 'https://buy.stripe.com/bJe14pfhO3PJeMNaRagA803', livstid: 'https://buy.stripe.com/bJecN70mU4TN6gh0cwgA804' };
+const STRIPE = { aar: 'https://buy.stripe.com/8x26oJc5C1HB489bVegA805', livstid: 'https://buy.stripe.com/eVqeVfb1ycmf5cd1gAgA806' };
 document.querySelectorAll('.buy').forEach(a => {
   const url = STRIPE[a.dataset.plan];
   a.href = url || `mailto:support@sebasoftware.com?subject=${encodeURIComponent('Køb af Seba Regnskab – ' + (a.dataset.plan === 'aar' ? '1 år' : 'livstid'))}`;

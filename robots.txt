@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /success.html
+Disallow: /upload.html
+Disallow: /regnskab/tak.html
+
+Sitemap: https://www.sebasoftware.com/sitemap.xml

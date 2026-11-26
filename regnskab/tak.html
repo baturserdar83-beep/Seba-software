@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tak for dit køb – Seba Regnskab</title>
+<link rel="icon" href="icon.png">
+<style>
+  :root{--ink:#0f172a;--ink2:#334155;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink)}
+  *{box-sizing:border-box} body{margin:0;background:#f6f8fc;line-height:1.55}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:18px;color:var(--ink);text-decoration:none;margin-bottom:26px}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:0 20px 40px -24px rgba(15,23,42,.25)}
+  h1{margin:0 0 6px;font-size:28px} p{color:var(--ink2)}
+  .code{font-family:Consolas,Menlo,monospace;font-size:15px;background:#f2f6ff;border:1px solid #bfd3ff;border-radius:12px;padding:16px;word-break:break-all;margin:14px 0}
+  .btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:11px 18px;font-weight:700;text-decoration:none;border:1px solid var(--line);color:var(--ink2);background:#fff;cursor:pointer;font-size:15px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  ol{color:var(--ink2);padding-left:20px} li{margin:5px 0}
+  .muted{color:var(--muted);font-size:14px}
+  .spin{display:inline-block;width:16px;height:16px;border:2px solid #cbd5e1;border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-3px;margin-right:8px}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="./"><img src="icon.png" alt="">Seba Regnskab</a>
+  <div class="card" id="box"><h1>Tak for dit køb!</h1><p><span class="spin"></span>Henter din aktiveringskode…</p></div>
+  <p class="muted" style="margin-top:18px">Spørgsmål? Skriv til <a href="mailto:support@sebasoftware.com">support@sebasoftware.com</a>.</p>
+</div>
+<script>
+const API = 'https://seba-license.baturserdar83.workers.dev/code';
+const box = document.getElementById('box');
+const sid = new URLSearchParams(location.search).get('session_id') || '';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const dk = d => d.split('-').reverse().join('.');
+function later(msg) {
+  box.innerHTML = `<h1>Tak for dit køb!</h1><p>${msg}</p><p>Din aktiveringskode bliver også sendt til din e-mail. Har du ikke fået den inden for 24 timer, så skriv til <a href="mailto:support@sebasoftware.com">support@sebasoftware.com</a>.</p><p><a class="btn" href="./">Til Seba Regnskab</a></p>`;
+}
+async function load(tries = 0) {
+  if (!/^cs_(live|test)_/.test(sid)) { later('Vi kunne ikke finde dit køb på denne side.'); return; }
+  try {
+    const r = await fetch(API + '?session_id=' + encodeURIComponent(sid));
+    const d = await r.json();
+    if (r.status === 402 && tries < 10) { setTimeout(() => load(tries + 1), 3000); return; }
+    if (!r.ok || !d.code) { later('Koden er ikke klar endnu.'); return; }
+    const plan = d.plan === 'livstid' ? 'Livstid' : '1 år' + (d.expires ? ' – gælder til ' + dk(d.expires) : '');
+    box.innerHTML = `<h1>Tak for dit køb!</h1><p>Her er din aktiveringskode til <b>Seba Regnskab</b> (${esc(plan)}):</p>
+      <div class="code" id="code">${esc(d.code)}</div>
+      <p><button class="btn primary" id="copy">Kopiér koden</button> <a class="btn" href="SebaRegnskab.zip" download>Hent programmet</a></p>
+      <p><b>Sådan aktiverer du</b></p><ol><li>Åbn Seba Regnskab.</li><li>Klik på <b>Indtast aktiveringskode</b> (øverst i vinduet eller under Opsætning).</li><li>Indsæt koden og klik <b>Aktivér</b>.</li></ol>
+      <p class="muted">Koden er også sendt til ${esc(d.email || 'din e-mail')}. Gem e-mailen – den er din kvittering.</p>`;
+    document.getElementById('copy').onclick = async e => { try { await navigator.clipboard.writeText(d.code); e.target.textContent = 'Kopieret ✓'; } catch { getSelection().selectAllChildren(document.getElementById('code')); } };
+  } catch (e) { later('Vi kunne ikke hente koden lige nu.'); }
+}
+load();
+</script>
+</body>
+</html>

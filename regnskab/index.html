@@ -138,7 +138,7 @@
 
 <script>
 /* Indsæt jeres Stripe Payment Links her, når de er oprettet: */
-const STRIPE = { aar: '', livstid: '' };
+const STRIPE = { aar: 'https://buy.stripe.com/bJe14pfhO3PJeMNaRagA803', livstid: 'https://buy.stripe.com/bJecN70mU4TN6gh0cwgA804' };
 document.querySelectorAll('.buy').forEach(a => {
   const url = STRIPE[a.dataset.plan];
   a.href = url || `mailto:support@sebasoftware.com?subject=${encodeURIComponent('Køb af Seba Regnskab – ' + (a.dataset.plan === 'aar' ? '1 år' : 'livstid'))}`;
